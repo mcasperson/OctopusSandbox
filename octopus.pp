@@ -1,16 +1,42 @@
-file { 'C:/install':
+include chocolatey
+
+file { 'C:/packages':
     ensure => 'directory',
 }
 
-file { 'octopus':
-    ensure => 'file',
-    path   => 'C:/install/Octopus.msi',
-    mode   => '0660',
-    source => 'https://download.octopusdeploy.com/octopus/Octopus.2019.5.4-x64.msi',
+package { '7zip':
+  ensure   => installed,
+  provider => chocolatey,
+  source   => 'c:/packages',
 }
 
-package { 'Octopus Deploy Server':
-    ensure          => installed,
-    source          => 'C:/install/Octopus.msi',
-    install_options => ['/quiet', 'RUNMANAGERONEXIT=no']
+package { 'jenkins':
+  ensure   => installed,
+  provider => chocolatey,
+  source   => 'c:/packages',
 }
+
+package { 'terraform':
+  ensure   => installed,
+  provider => chocolatey,
+  source   => 'c:/packages',
+}
+
+package { 'octopusdeploy':
+  ensure   => installed,
+  provider => chocolatey,
+  source   => 'c:/packages',
+}
+
+package { 'octopustools':
+  ensure   => installed,
+  provider => chocolatey,
+  source   => 'c:/packages',
+}
+
+package { 'octopusdeploy.tentacle':
+  ensure   => installed,
+  provider => chocolatey,
+  source   => 'c:/packages',
+}
+
