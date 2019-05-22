@@ -1,11 +1,15 @@
+file { 'C:/install':
+    ensure => 'directory',
+}
+
 file { 'octopus':
-    path => 'C:/install/Octopus.msi',
     ensure => 'file',
-    mode => '0660',
+    path   => 'C:/install/Octopus.msi',
+    mode   => '0660',
     source => 'https://download.octopusdeploy.com/octopus/Octopus.2019.5.4-x64.msi',
 }
 
-package { "octopus":
+package { 'Octopus Deploy Server':
     ensure          => installed,
     source          => 'C:/install/Octopus.msi',
     install_options => ['/quiet', 'RUNMANAGERONEXIT=no']
