@@ -87,7 +87,7 @@ file { 'C:/Program Files (x86)/Jenkins/init.groovy.d/plugins.groovy':
     Set<String> missing_plugins = plugins_to_install - installed_plugins
     if(missing_plugins.size() > 0) {
         println "Install missing plugins..."
-        install(missing_plugins, false, updateSite)
+        install(missing_plugins, true, updateSite)
         println "Done installing missing plugins."
         hasConfigBeenUpdated = true
     }
@@ -103,6 +103,11 @@ file { 'C:/Program Files (x86)/Jenkins/init.groovy.d/plugins.groovy':
 }
 
 package { '7zip':
+  ensure   => installed,
+  provider => chocolatey
+}
+
+package { 'notepadplusplus':
   ensure   => installed,
   provider => chocolatey
 }
