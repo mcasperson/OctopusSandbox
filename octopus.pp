@@ -1,5 +1,30 @@
 include chocolatey
 
+package { 'jenkins':
+  ensure   => installed,
+  provider => chocolatey
+}
+
+package { 'terraform':
+  ensure   => installed,
+  provider => chocolatey
+}
+
+package { 'octopusdeploy':
+  ensure   => installed,
+  provider => chocolatey
+}
+
+package { 'octopustools':
+  ensure   => installed,
+  provider => chocolatey
+}
+
+package { 'octopusdeploy.tentacle':
+  ensure   => installed,
+  provider => chocolatey
+}
+
 package { '7zip':
   ensure   => installed,
   provider => chocolatey
@@ -10,7 +35,37 @@ package { 'notepadplusplus':
   provider => chocolatey
 }
 
-package { 'jenkins':
+package { 'dotnetcore-sdk':
+  ensure   => installed,
+  provider => chocolatey
+}
+
+package { 'nodejs':
+  ensure   => installed,
+  provider => chocolatey
+}
+
+package { 'docker-desktop':
+  ensure   => installed,
+  provider => chocolatey
+}
+
+package { 'kubernetes-helm':
+  ensure   => installed,
+  provider => chocolatey
+}
+
+package { 'kubernetes-cli':
+  ensure   => installed,
+  provider => chocolatey
+}
+
+package { 'minikube':
+  ensure   => installed,
+  provider => chocolatey
+}
+
+package { 'awscli':
   ensure   => installed,
   provider => chocolatey
 }
@@ -86,7 +141,7 @@ file { 'C:/Program Files (x86)/Jenkins/init.groovy.d/plugins.groovy':
 
     // The list of plugins to install
     Set<String> plugins_to_install = [
-        "git", "github", "blueocean"
+        "git", "github", "blueocean", "custom-tools-plugin"
     ]
 
     List<PluginWrapper> plugins = Jenkins.instance.pluginManager.getPlugins()
@@ -127,24 +182,4 @@ file_line { 'installStateName':
 exec { 'Restart Jenkins':
   subscribe => File_line['installStateName'],
   command   => 'C:\\Windows\\system32\\cmd.exe /c net stop Jenkins & net start Jenkins',
-}
-
-package { 'terraform':
-  ensure   => installed,
-  provider => chocolatey
-}
-
-package { 'octopusdeploy':
-  ensure   => installed,
-  provider => chocolatey
-}
-
-package { 'octopustools':
-  ensure   => installed,
-  provider => chocolatey
-}
-
-package { 'octopusdeploy.tentacle':
-  ensure   => installed,
-  provider => chocolatey
 }
