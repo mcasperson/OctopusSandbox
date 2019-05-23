@@ -71,8 +71,8 @@ package { 'octopusdeploy.tentacle':
   provider => chocolatey
 }
 
-augeas{ "bbdisplay_setting":
-  incl    => 'C:/Program Files (x86)/Jenkins/config.xml',
-  lens    => "Xml.lns",
-  changes => "set hudson/installStateName RUNNING",
+file_line { 'someline':
+  path  => 'C:/Program Files (x86)/Jenkins/config.xml',
+  line  => '    <initialStateName>RUNNING</initialStateName>',
+  match => '^\s*<initialStateName>NEW</initialStateName>',
 }
