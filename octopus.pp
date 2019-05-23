@@ -10,6 +10,11 @@ package { '7zip':
   provider => chocolatey
 }
 
+package { 'git':
+  ensure   => installed,
+  provider => chocolatey
+}
+
 package { 'notepadplusplus':
   ensure   => installed,
   provider => chocolatey
@@ -196,6 +201,10 @@ file { 'C:/program Files (x86)/Jenkins/init.groovy.d':
   subscribe => File_line['installStateName'],
   command   => 'C:\\Windows\\system32\\cmd.exe /c net stop Jenkins & net start Jenkins',
 }
+-> exec{'Create Jenkins Shortcut':
+    provider => 'powershell',
+    command  => '$sh = New-Object -comObject WScript.Shell; $short = $sh.CreateShortcut(objShell.SpecialFolders("Desktop") + "Jenkins.lnk"); $short.TargetPath = "http://localhost:8080"; $short.Save();'
+}
 
 # CONFIGURE OCTOPUS
 package { 'sql-server-express':
@@ -235,6 +244,10 @@ package { 'sql-server-express':
 }
 -> exec { 'Create Prod Environment':
   command   => 'C:\\Windows\\system32\\cmd.exe /c octo create-environment --name=Prod --user=admin --password=Password01! --server=http://localhost',
+}
+-> exec{'Create Octopus Shortcut':
+    provider => 'powershell',
+    command  => '$sh = New-Object -comObject WScript.Shell; $short = $sh.CreateShortcut(objShell.SpecialFolders("Desktop") + "Octopus.lnk"); $short.TargetPath = "http://localhost"; $short.Save();'
 }
 
 package { 'octopusdeploy.tentacle':
