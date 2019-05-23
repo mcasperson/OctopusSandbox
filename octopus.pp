@@ -79,6 +79,6 @@ file_line { 'installStateName':
 }
 
 exec { 'Restart Jenkins':
-  command   => 'cmd.exe /c net stop Jenkins & net start Jenkins',
-  subscribe => file_line['installStateName'],
+  command   => 'C:\\Windows\\system32\\cmd.exe /c net stop Jenkins & net start Jenkins',
+  subscribe => File_line['installStateName'],
 }
