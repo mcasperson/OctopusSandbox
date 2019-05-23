@@ -5,7 +5,7 @@ package { 'jenkins':
   provider => chocolatey
 }
 
-package { 'terraform':
+package { 'sql-server-express':
   ensure   => installed,
   provider => chocolatey
 }
@@ -31,6 +31,11 @@ package { '7zip':
 }
 
 package { 'notepadplusplus':
+  ensure   => installed,
+  provider => chocolatey
+}
+
+package { 'terraform':
   ensure   => installed,
   provider => chocolatey
 }
@@ -71,6 +76,8 @@ package { 'awscli':
   provider => chocolatey
 }
 */
+
+# CONFIGURE JENKINS
 
 file { 'C:/program Files (x86)/Jenkins/init.groovy.d':
   ensure    => 'directory',
@@ -143,7 +150,7 @@ file { 'C:/Program Files (x86)/Jenkins/init.groovy.d/plugins.groovy':
 
     // The list of plugins to install
     Set<String> plugins_to_install = [
-        "git", "github", "blueocean", "custom-tools-plugin"
+        "git", "github", "blueocean", "custom-tools-plugin", "simple-theme-plugin"
     ]
 
     List<PluginWrapper> plugins = Jenkins.instance.pluginManager.getPlugins()
@@ -185,3 +192,63 @@ exec { 'Restart Jenkins':
   subscribe => File_line['installStateName'],
   command   => 'C:\\Windows\\system32\\cmd.exe /c net stop Jenkins & net start Jenkins',
 }
+
+# CONFIGURE OCTOPUS
+file { 'C:/install_octopus.bat':
+  ensure    => 'file',
+  subscribe => Package['octopusdeploy'],
+  owner     => 'Administrators',
+  group     => 'Administrators',
+  mode      => '0644',
+  content   => @(EOT)
+    "C:\Program Files\Octopus Deploy\Octopus\Octopus.Server.exe" create-instance --instance "OctopusServer" --config "C:\Octopus\OctopusServer.config"
+    "C:\Program Files\Octopus Deploy\Octopus\Octopus.Server.exe" database --instance "OctopusServer" --connectionString "Data Source=(local)\SQLEXPRESS;Initial Catalog=Octopus1;Integrated Security=True" --create --grant "NT AUTHORITY\SYSTEM"
+    "C:\Program Files\Octopus Deploy\Octopus\Octopus.Server.exe" configure --instance "OctopusServer" --upgradeCheck "False" --upgradeCheckWithStatistics "False" --webForceSSL "False" --webListenPrefixes "http://localhost:80/" --commsListenPort "10943" --serverNodeName "DESKTOP-JVNRAAG" --usernamePasswordIsEnabled "True"
+    "C:\Program Files\Octopus Deploy\Octopus\Octopus.Server.exe" service --instance "OctopusServer" --stop
+    "C:\Program Files\Octopus Deploy\Octopus\Octopus.Server.exe" admin --instance "OctopusServer" --username "admin" --email "a@a.com" --password "Password01!"
+    "C:\Program Files\Octopus Deploy\Octopus\Octopus.Server.exe" service --instance "OctopusServer" --install --reconfigure --start --dependOn "MSSQL$SQLEXPRESS"
+    | EOT
+}
+
+exec { 'Install Octopus':
+  subscribe => File['C:/install_octopus.bat'],
+  command   => 'C:\\Windows\\system32\\cmd.exe /c C:\\install_octopus.bat',
+}
+
+exec { 'Create Dev Environment':
+  subscribe => Package['octopustools'],
+  command   => 'C:\\Windows\\system32\\cmd.exe /c octo create-environment --name=Dev --user=admin --password=Password01! --server=http://localhost',
+}
+
+exec { 'Create Test Environment':
+  subscribe => Package['octopustools'],
+  command   => 'C:\\Windows\\system32\\cmd.exe /c octo create-environment --name=Test --user=admin --password=Password01! --server=http://localhost',
+}
+
+exec { 'Create Prod Environment':
+  subscribe => Package['octopustools'],
+  command   => 'C:\\Windows\\system32\\cmd.exe /c octo create-environment --name=Prod --user=admin --password=Password01! --server=http://localhost',
+}
+
+file { 'C:/install_tentacle.bat':
+  ensure    => 'file',
+  subscribe => Package['octopusdeploy.tentacle'],
+  owner     => 'Administrators',
+  group     => 'Administrators',
+  mode      => '0644',
+  content   => @(EOT)
+    "C:\Program Files\Octopus Deploy\Tentacle\Tentacle.exe" create-instance --instance "Tentacle" --config "C:\Octopus\Tentacle.config"
+    "C:\Program Files\Octopus Deploy\Tentacle\Tentacle.exe" new-certificate --instance "Tentacle" --if-blank
+    "C:\Program Files\Octopus Deploy\Tentacle\Tentacle.exe" configure --instance "Tentacle" --reset-trust
+    "C:\Program Files\Octopus Deploy\Tentacle\Tentacle.exe" configure --instance "Tentacle" --app "C:\Octopus\Applications" --port "10933" --noListen "True"
+    "C:\Program Files\Octopus Deploy\Tentacle\Tentacle.exe" polling-proxy --instance "Tentacle" --proxyEnable "False" --proxyUsername "" --proxyPassword "" --proxyHost "" --proxyPort ""
+    "C:\Program Files\Octopus Deploy\Tentacle\Tentacle.exe" register-with --instance "Tentacle" --server "http://localhost" --name "DESKTOP-JVNRAAG" --comms-style "TentacleActive" --server-comms-port "10943" --username "admin" --password "Password01!" --space "Default" --environment "Dev" --role "Windows" --policy "Default Machine Policy"
+    "C:\Program Files\Octopus Deploy\Tentacle\Tentacle.exe" service --instance "Tentacle" --install --stop --start
+    | EOT
+}
+
+exec { 'Install Tentacle':
+  subscribe => File['C:/install_tentacle.bat'],
+  command   => 'C:\\Windows\\system32\\cmd.exe /c C:\\install_tentacle.bat',
+}
+
