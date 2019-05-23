@@ -5,21 +5,6 @@ package { 'jenkins':
   provider => chocolatey
 }
 
-package { 'octopusdeploy':
-  ensure   => installed,
-  provider => chocolatey
-}
-
-package { 'octopustools':
-  ensure   => installed,
-  provider => chocolatey
-}
-
-package { 'octopusdeploy.tentacle':
-  ensure   => installed,
-  provider => chocolatey
-}
-
 package { '7zip':
   ensure   => installed,
   provider => chocolatey
@@ -31,11 +16,6 @@ package { 'notepadplusplus':
 }
 
 package { 'terraform':
-  ensure   => installed,
-  provider => chocolatey
-}
-
-package { 'sql-server-express':
   ensure   => installed,
   provider => chocolatey
 }
@@ -88,8 +68,7 @@ file { 'C:/program Files (x86)/Jenkins/init.groovy.d':
   ensure    => 'directory',
   subscribe => Package['jenkins'],
 }
-
-file { 'C:/Program Files (x86)/Jenkins/init.groovy.d/1.security.groovy':
+-> file { 'C:/Program Files (x86)/Jenkins/init.groovy.d/1.security.groovy':
   ensure    => 'file',
   subscribe => File['C:/program Files (x86)/Jenkins/init.groovy.d'],
   owner     => 'Administrators',
@@ -119,8 +98,7 @@ file { 'C:/Program Files (x86)/Jenkins/init.groovy.d/1.security.groovy':
 
     | EOT
 }
-
-file { 'C:/Program Files (x86)/Jenkins/init.groovy.d/2.plugins.groovy':
+-> file { 'C:/Program Files (x86)/Jenkins/init.groovy.d/2.plugins.groovy':
   ensure    => 'file',
   subscribe => File['C:/Program Files (x86)/Jenkins/init.groovy.d/1.security.groovy'],
   owner     => 'Administrators',
@@ -184,8 +162,7 @@ file { 'C:/Program Files (x86)/Jenkins/init.groovy.d/2.plugins.groovy':
 
     | EOT
 }
-
-file { 'C:/Program Files (x86)/Jenkins/init.groovy.d/3.simpletheme.groovy':
+-> file { 'C:/Program Files (x86)/Jenkins/init.groovy.d/3.simpletheme.groovy':
   ensure    => 'file',
   subscribe => File['C:/Program Files (x86)/Jenkins/init.groovy.d/2.plugins.groovy'],
   owner     => 'Administrators',
@@ -208,28 +185,33 @@ file { 'C:/Program Files (x86)/Jenkins/init.groovy.d/3.simpletheme.groovy':
 
     | EOT
 }
-
-file_line { 'installStateName':
+-> file_line { 'installStateName':
   subscribe => File['C:/Program Files (x86)/Jenkins/init.groovy.d/3.simpletheme.groovy'],
   path      => 'C:/Program Files (x86)/Jenkins/config.xml',
   line      => '  <installStateName>RUNNING</installStateName>',
   match     => '^\s*<installStateName>NEW</installStateName>',
   replace   => true,
 }
-
-exec { 'Restart Jenkins':
+-> exec { 'Restart Jenkins':
   subscribe => File_line['installStateName'],
   command   => 'C:\\Windows\\system32\\cmd.exe /c net stop Jenkins & net start Jenkins',
 }
 
 # CONFIGURE OCTOPUS
-file { 'C:/install_octopus.bat':
-  ensure    => 'file',
-  subscribe => Package['octopusdeploy'],
-  owner     => 'Administrators',
-  group     => 'Administrators',
-  mode      => '0644',
-  content   => @(EOT)
+package { 'sql-server-express':
+  ensure   => installed,
+  provider => chocolatey
+}
+-> package { 'octopusdeploy':
+  ensure   => installed,
+  provider => chocolatey
+}
+-> file { 'C:/install_octopus.bat':
+  ensure  => 'file',
+  owner   => 'Administrators',
+  group   => 'Administrators',
+  mode    => '0644',
+  content => @(EOT)
     "C:\Program Files\Octopus Deploy\Octopus\Octopus.Server.exe" create-instance --instance "OctopusServer" --config "C:\Octopus\OctopusServer.config"
     "C:\Program Files\Octopus Deploy\Octopus\Octopus.Server.exe" database --instance "OctopusServer" --connectionString "Data Source=(local)\SQLEXPRESS;Initial Catalog=Octopus;Integrated Security=True" --create --grant "NT AUTHORITY\SYSTEM"
     "C:\Program Files\Octopus Deploy\Octopus\Octopus.Server.exe" configure --instance "OctopusServer" --upgradeCheck "False" --upgradeCheckWithStatistics "False" --webForceSSL "False" --webListenPrefixes "http://localhost:80/" --commsListenPort "10943" --serverNodeName "DESKTOP-JVNRAAG" --usernamePasswordIsEnabled "True"
@@ -238,34 +220,33 @@ file { 'C:/install_octopus.bat':
     "C:\Program Files\Octopus Deploy\Octopus\Octopus.Server.exe" service --instance "OctopusServer" --install --reconfigure --start --dependOn "MSSQL$SQLEXPRESS"
     | EOT
 }
-
-exec { 'Install Octopus':
-  subscribe => File['C:/install_octopus.bat'],
+-> exec { 'Install Octopus':
   command   => 'C:\\Windows\\system32\\cmd.exe /c C:\\install_octopus.bat',
 }
-
-exec { 'Create Dev Environment':
-  subscribe => Package['octopustools'],
+-> package { 'octopustools':
+  ensure   => installed,
+  provider => chocolatey
+}
+-> exec { 'Create Dev Environment':
   command   => 'C:\\Windows\\system32\\cmd.exe /c octo create-environment --name=Dev --user=admin --password=Password01! --server=http://localhost',
 }
-
-exec { 'Create Test Environment':
-  subscribe => Package['octopustools'],
+-> exec { 'Create Test Environment':
   command   => 'C:\\Windows\\system32\\cmd.exe /c octo create-environment --name=Test --user=admin --password=Password01! --server=http://localhost',
 }
-
-exec { 'Create Prod Environment':
-  subscribe => Package['octopustools'],
+-> exec { 'Create Prod Environment':
   command   => 'C:\\Windows\\system32\\cmd.exe /c octo create-environment --name=Prod --user=admin --password=Password01! --server=http://localhost',
 }
 
-file { 'C:/install_tentacle.bat':
-  ensure    => 'file',
-  subscribe => Package['octopusdeploy.tentacle'],
-  owner     => 'Administrators',
-  group     => 'Administrators',
-  mode      => '0644',
-  content   => @(EOT)
+package { 'octopusdeploy.tentacle':
+  ensure   => installed,
+  provider => chocolatey
+}
+-> file { 'C:/install_tentacle.bat':
+  ensure  => 'file',
+  owner   => 'Administrators',
+  group   => 'Administrators',
+  mode    => '0644',
+  content => @(EOT)
     "C:\Program Files\Octopus Deploy\Tentacle\Tentacle.exe" create-instance --instance "Tentacle" --config "C:\Octopus\Tentacle.config"
     "C:\Program Files\Octopus Deploy\Tentacle\Tentacle.exe" new-certificate --instance "Tentacle" --if-blank
     "C:\Program Files\Octopus Deploy\Tentacle\Tentacle.exe" configure --instance "Tentacle" --reset-trust
@@ -275,8 +256,6 @@ file { 'C:/install_tentacle.bat':
     "C:\Program Files\Octopus Deploy\Tentacle\Tentacle.exe" service --instance "Tentacle" --install --stop --start
     | EOT
 }
-
-exec { 'Install Tentacle':
-  subscribe => File['C:/install_tentacle.bat'],
+-> exec { 'Install Tentacle':
   command   => 'C:\\Windows\\system32\\cmd.exe /c C:\\install_tentacle.bat',
 }
