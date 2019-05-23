@@ -35,12 +35,22 @@ package { 'terraform':
   provider => chocolatey
 }
 
-package { 'docker-desktop':
+package { 'sql-server-express':
   ensure   => installed,
   provider => chocolatey
 }
 
 /*
+package { 'docker-desktop':
+  ensure   => installed,
+  provider => chocolatey
+}
+
+package { 'docker-cli':
+  ensure   => installed,
+  provider => chocolatey
+}
+
 package { 'dotnetcore-sdk':
   ensure   => installed,
   provider => chocolatey
@@ -229,7 +239,6 @@ file { 'C:/install_octopus.bat':
     | EOT
 }
 
-/*
 exec { 'Install Octopus':
   subscribe => File['C:/install_octopus.bat'],
   command   => 'C:\\Windows\\system32\\cmd.exe /c C:\\install_octopus.bat',
@@ -249,7 +258,6 @@ exec { 'Create Prod Environment':
   subscribe => Package['octopustools'],
   command   => 'C:\\Windows\\system32\\cmd.exe /c octo create-environment --name=Prod --user=admin --password=Password01! --server=http://localhost',
 }
-*/
 
 file { 'C:/install_tentacle.bat':
   ensure    => 'file',
@@ -268,9 +276,7 @@ file { 'C:/install_tentacle.bat':
     | EOT
 }
 
-/*
 exec { 'Install Tentacle':
   subscribe => File['C:/install_tentacle.bat'],
   command   => 'C:\\Windows\\system32\\cmd.exe /c C:\\install_tentacle.bat',
 }
-*/
