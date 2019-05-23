@@ -1,5 +1,12 @@
 include chocolatey
 
+# We want to run Jenkins in development mode, skipping the initial wizard
+# https://wiki.jenkins.io/display/JENKINS/Features+controlled+by+system+properties
+windows_env { 'JENKINS_JAVA_OPTIONS':
+  ensure    => '-Djenkins.install.runSetupWizard=false',
+  mergemode => clobber,
+}
+
 file { 'C:/packages':
     ensure => 'directory',
 }
