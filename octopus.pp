@@ -75,7 +75,6 @@ file { 'C:/program Files (x86)/Jenkins/init.groovy.d':
 }
 -> file { 'C:/Program Files (x86)/Jenkins/init.groovy.d/1.security.groovy':
   ensure    => 'file',
-  subscribe => File['C:/program Files (x86)/Jenkins/init.groovy.d'],
   owner     => 'Administrators',
   group     => 'Administrators',
   mode      => '0644',
@@ -105,7 +104,6 @@ file { 'C:/program Files (x86)/Jenkins/init.groovy.d':
 }
 -> file { 'C:/Program Files (x86)/Jenkins/init.groovy.d/2.plugins.groovy':
   ensure    => 'file',
-  subscribe => File['C:/Program Files (x86)/Jenkins/init.groovy.d/1.security.groovy'],
   owner     => 'Administrators',
   group     => 'Administrators',
   mode      => '0644',
@@ -169,7 +167,6 @@ file { 'C:/program Files (x86)/Jenkins/init.groovy.d':
 }
 -> file { 'C:/Program Files (x86)/Jenkins/init.groovy.d/3.simpletheme.groovy':
   ensure    => 'file',
-  subscribe => File['C:/Program Files (x86)/Jenkins/init.groovy.d/2.plugins.groovy'],
   owner     => 'Administrators',
   group     => 'Administrators',
   mode      => '0644',
@@ -191,14 +188,12 @@ file { 'C:/program Files (x86)/Jenkins/init.groovy.d':
     | EOT
 }
 -> file_line { 'installStateName':
-  subscribe => File['C:/Program Files (x86)/Jenkins/init.groovy.d/3.simpletheme.groovy'],
   path      => 'C:/Program Files (x86)/Jenkins/config.xml',
   line      => '  <installStateName>RUNNING</installStateName>',
   match     => '^\s*<installStateName>NEW</installStateName>',
   replace   => true,
 }
 -> exec { 'Restart Jenkins':
-  subscribe => File_line['installStateName'],
   command   => 'C:\\Windows\\system32\\cmd.exe /c net stop Jenkins & net start Jenkins',
 }
 -> exec{'Create Jenkins Shortcut':
