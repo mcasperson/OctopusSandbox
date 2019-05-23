@@ -47,6 +47,7 @@ file { 'C:/Program Files (x86)/Jenkins/init.groovy.d/plugins.groovy':
     #!groovy
     import hudson.model.UpdateSite
     import hudson.PluginWrapper
+    import jenkins.model.*
 
     /*
       Install Jenkins plugins
