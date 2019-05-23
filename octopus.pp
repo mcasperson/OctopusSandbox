@@ -1,19 +1,32 @@
 include chocolatey
 
-file { 'C:/program Files (x86)/Jenkins':
-  ensure => 'directory',
+package { '7zip':
+  ensure   => installed,
+  provider => chocolatey
+}
+
+package { 'notepadplusplus':
+  ensure   => installed,
+  provider => chocolatey
+}
+
+package { 'jenkins':
+  ensure   => installed,
+  provider => chocolatey
 }
 
 file { 'C:/program Files (x86)/Jenkins/init.groovy.d':
-  ensure => 'directory',
+  ensure    => 'directory',
+  subscribe => Package['jenkins'],
 }
 
 file { 'C:/Program Files (x86)/Jenkins/init.groovy.d/security.groovy':
-  ensure  => 'file',
-  owner   => 'Administrators',
-  group   => 'Administrators',
-  mode    => '0644',
-  content => @(EOT)
+  ensure    => 'file',
+  subscribe => File['C:/program Files (x86)/Jenkins/init.groovy.d'],
+  owner     => 'Administrators',
+  group     => 'Administrators',
+  mode      => '0644',
+  content   => @(EOT)
     #!groovy
     import java.util.logging.Level
     import java.util.logging.Logger
@@ -39,11 +52,12 @@ file { 'C:/Program Files (x86)/Jenkins/init.groovy.d/security.groovy':
 }
 
 file { 'C:/Program Files (x86)/Jenkins/init.groovy.d/plugins.groovy':
-  ensure  => 'file',
-  owner   => 'Administrators',
-  group   => 'Administrators',
-  mode    => '0644',
-  content => @(EOT)
+  ensure    => 'file',
+  subscribe => File['C:/Program Files (x86)/Jenkins/init.groovy.d/security.groovy'],
+  owner     => 'Administrators',
+  group     => 'Administrators',
+  mode      => '0644',
+  content   => @(EOT)
     #!groovy
     import hudson.model.UpdateSite
     import hudson.PluginWrapper
@@ -102,19 +116,17 @@ file { 'C:/Program Files (x86)/Jenkins/init.groovy.d/plugins.groovy':
     | EOT
 }
 
-package { '7zip':
-  ensure   => installed,
-  provider => chocolatey
+file_line { 'installStateName':
+  subscribe => File['C:/Program Files (x86)/Jenkins/init.groovy.d/plugins.groovy'],
+  path      => 'C:/Program Files (x86)/Jenkins/config.xml',
+  line      => '  <installStateName>RUNNING</installStateName>',
+  match     => '^\s*<installStateName>NEW</installStateName>',
+  replace   => true,
 }
 
-package { 'notepadplusplus':
-  ensure   => installed,
-  provider => chocolatey
-}
-
-package { 'jenkins':
-  ensure   => installed,
-  provider => chocolatey
+exec { 'Restart Jenkins':
+  subscribe => File_line['installStateName'],
+  command   => 'C:\\Windows\\system32\\cmd.exe /c net stop Jenkins & net start Jenkins',
 }
 
 package { 'terraform':
@@ -135,17 +147,4 @@ package { 'octopustools':
 package { 'octopusdeploy.tentacle':
   ensure   => installed,
   provider => chocolatey
-}
-
-file_line { 'installStateName':
-  path  => 'C:/Program Files (x86)/Jenkins/config.xml',
-  line  => '  <installStateName>RUNNING</installStateName>',
-  match => '^\s*<installStateName>NEW</installStateName>',
-  replace => true,
-  subscribe => Package['jenkins']
-}
-
-exec { 'Restart Jenkins':
-  command   => 'C:\\Windows\\system32\\cmd.exe /c net stop Jenkins & net start Jenkins',
-  subscribe => File_line['installStateName'],
 }
