@@ -1,49 +1,14 @@
 include chocolatey
 
-# We want to run Jenkins in development mode, skipping the initial wizard
-# https://wiki.jenkins.io/display/JENKINS/Features+controlled+by+system+properties
-windows_env { 'JENKINS_JAVA_OPTIONS':
-  ensure    => present,
-  mergemode => clobber,
-  value     => '-Djenkins.install.runSetupWizard=false'
+file { 'C:/program Files (x86)/Jenkins':
+  ensure => 'directory',
 }
-
-package { '7zip':
-  ensure   => installed,
-  provider => chocolatey
-}
-
-package { 'jenkins':
-  ensure   => installed,
-  provider => chocolatey
-}
-
-package { 'terraform':
-  ensure   => installed,
-  provider => chocolatey
-}
-
-package { 'octopusdeploy':
-  ensure   => installed,
-  provider => chocolatey
-}
-
-package { 'octopustools':
-  ensure   => installed,
-  provider => chocolatey
-}
-
-package { 'octopusdeploy.tentacle':
-  ensure   => installed,
-  provider => chocolatey
-}
-
 
 file { 'C:/program Files (x86)/Jenkins/init.groovy.d':
   ensure => 'directory',
 }
 
-file { 'C:/program Files (x86)/Jenkins/init.groovy.d/security.groovy':
+file { 'C:/Program Files (x86)/Jenkins/init.groovy.d/security.groovy':
   ensure  => 'file',
   owner   => 'Administrators',
   group   => 'Administrators',
@@ -76,20 +41,38 @@ file { 'C:/program Files (x86)/Jenkins/init.groovy.d/security.groovy':
     | EOT
 }
 
-file { 'C:/program Files (x86)/Jenkins/init.groovy.d/setup.groovy':
-  ensure  => 'file',
-  owner   => 'Administrators',
-  group   => 'Administrators',
-  mode    => '0644',
-  content => @(EOT)
-    #!groovy
+package { '7zip':
+  ensure   => installed,
+  provider => chocolatey
+}
 
-    import jenkins.model.*
-    import hudson.util.*;
-    import jenkins.install.*;
+package { 'jenkins':
+  ensure   => installed,
+  provider => chocolatey
+}
 
-    def instance = Jenkins.getInstance()
+package { 'terraform':
+  ensure   => installed,
+  provider => chocolatey
+}
 
-    instance.setInstallState(InstallState.INITIAL_SETUP_COMPLETED)
-    | EOT
+package { 'octopusdeploy':
+  ensure   => installed,
+  provider => chocolatey
+}
+
+package { 'octopustools':
+  ensure   => installed,
+  provider => chocolatey
+}
+
+package { 'octopusdeploy.tentacle':
+  ensure   => installed,
+  provider => chocolatey
+}
+
+augeas{ "bbdisplay_setting":
+  incl    => 'C:/Program Files (x86)/Jenkins/config.xml',
+  lens    => "Xml.lns",
+  changes => "set hudson/installStateName RUNNING",
 }
