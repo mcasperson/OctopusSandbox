@@ -75,3 +75,21 @@ file { 'C:/program Files (x86)/Jenkins/init.groovy.d/security.groovy':
     }
     | EOT
 }
+
+file { 'C:/program Files (x86)/Jenkins/init.groovy.d/setup.groovy':
+  ensure  => 'file',
+  owner   => 'Administrators',
+  group   => 'Administrators',
+  mode    => '0644',
+  content => @(EOT)
+    #!groovy
+
+    import jenkins.model.*
+    import hudson.util.*;
+    import jenkins.install.*;
+
+    def instance = Jenkins.getInstance()
+
+    instance.setInstallState(InstallState.INITIAL_SETUP_COMPLETED)
+    | EOT
+}
