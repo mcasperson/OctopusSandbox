@@ -71,8 +71,9 @@ package { 'octopusdeploy.tentacle':
   provider => chocolatey
 }
 
-file_line { 'someline':
+file_line { 'installStateName':
   path  => 'C:/Program Files (x86)/Jenkins/config.xml',
-  line  => '    <initialStateName>RUNNING</initialStateName>',
-  match => '^\s*<initialStateName>NEW</initialStateName>',
+  line  => '  <installStateName>RUNNING</installStateName>',
+  match => '^\s*<installStateName>NEW</installStateName>',
+  replace => true
 }
