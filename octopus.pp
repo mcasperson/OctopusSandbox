@@ -1,5 +1,13 @@
 include chocolatey
 
+# We want to run Jenkins in development mode, skipping the initial wizard
+# https://wiki.jenkins.io/display/JENKINS/Features+controlled+by+system+properties
+windows_env { 'JENKINS_JAVA_OPTIONS':
+  ensure    => present,
+  mergemode => clobber,
+  value     => '-Djenkins.install.runSetupWizard=false'
+}
+
 package { '7zip':
   ensure   => installed,
   provider => chocolatey
@@ -32,7 +40,7 @@ package { 'octopusdeploy.tentacle':
 
 
 file { 'C:/program Files (x86)/Jenkins/init.groovy.d':
-    ensure => 'directory',
+  ensure => 'directory',
 }
 
 file { 'C:/program Files (x86)/Jenkins/init.groovy.d/security.groovy':
