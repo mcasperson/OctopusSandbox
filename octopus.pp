@@ -35,6 +35,7 @@ package { 'notepadplusplus':
   provider => chocolatey
 }
 
+/*
 package { 'dotnetcore-sdk':
   ensure   => installed,
   provider => chocolatey
@@ -69,6 +70,7 @@ package { 'awscli':
   ensure   => installed,
   provider => chocolatey
 }
+*/
 
 file { 'C:/program Files (x86)/Jenkins/init.groovy.d':
   ensure    => 'directory',
