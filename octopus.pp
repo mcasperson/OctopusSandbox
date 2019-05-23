@@ -6,37 +6,31 @@ file { 'C:/packages':
 
 package { '7zip':
   ensure   => installed,
-  provider => chocolatey,
-  source   => 'c:/packages',
+  provider => chocolatey
 }
 
 package { 'jenkins':
   ensure   => installed,
-  provider => chocolatey,
-  source   => 'c:/packages',
+  provider => chocolatey
 }
 
 package { 'terraform':
   ensure   => installed,
-  provider => chocolatey,
-  source   => 'c:/packages',
+  provider => chocolatey
 }
 
 package { 'octopusdeploy':
   ensure   => installed,
-  provider => chocolatey,
-  source   => 'c:/packages',
+  provider => chocolatey
 }
 
 package { 'octopustools':
   ensure   => installed,
-  provider => chocolatey,
-  source   => 'c:/packages',
+  provider => chocolatey
 }
 
 package { 'octopusdeploy.tentacle':
   ensure   => installed,
-  provider => chocolatey,
-  source   => 'c:/packages',
+  provider => chocolatey
 }
 

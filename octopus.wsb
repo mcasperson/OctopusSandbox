@@ -1,7 +1,7 @@
 <Configuration>
 <MappedFolders>
 <MappedFolder>
-<HostFolder>C:\Users\Matthew\Documents\GitHub\OctopusSandbox</HostFolder>
+<HostFolder>C:\Users\Matthew\Octopus\OctopusSandbox</HostFolder>
 <ReadOnly>true</ReadOnly>
 </MappedFolder>
 </MappedFolders>
