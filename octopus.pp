@@ -23,21 +23,18 @@ file { 'C:/Program Files (x86)/Jenkins/init.groovy.d/security.groovy':
     def instance = Jenkins.getInstance()
     def logger = Logger.getLogger(Jenkins.class.getName())
 
-    logger.log(Level.INFO, "Ensuring that local user 'admin' is created.")
+    logger.log(Level.INFO, "Creating local admin user 'admin'.")
 
-    if (!instance.isUseSecurity()) {
-        logger.log(Level.INFO, "Creating local admin user 'admin'.")
+    def strategy = new FullControlOnceLoggedInAuthorizationStrategy()
+    strategy.setAllowAnonymousRead(false)
 
-        def strategy = new FullControlOnceLoggedInAuthorizationStrategy()
-        strategy.setAllowAnonymousRead(false)
+    def hudsonRealm = new HudsonPrivateSecurityRealm(false)
+    hudsonRealm.createAccount("admin", "Password01!")
 
-        def hudsonRealm = new HudsonPrivateSecurityRealm(false)
-        hudsonRealm.createAccount("admin", "Password01!")
+    instance.setSecurityRealm(hudsonRealm)
+    instance.setAuthorizationStrategy(strategy)
+    instance.save()
 
-        instance.setSecurityRealm(hudsonRealm)
-        instance.setAuthorizationStrategy(strategy)
-        instance.save()
-    }
     | EOT
 }
 
@@ -75,7 +72,8 @@ file_line { 'installStateName':
   path  => 'C:/Program Files (x86)/Jenkins/config.xml',
   line  => '  <installStateName>RUNNING</installStateName>',
   match => '^\s*<installStateName>NEW</installStateName>',
-  replace => true
+  replace => true,
+  subscribe => Package['jenkins']
 }
 
 exec { 'Restart Jenkins':
