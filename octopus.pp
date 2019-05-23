@@ -77,3 +77,8 @@ file_line { 'installStateName':
   match => '^\s*<installStateName>NEW</installStateName>',
   replace => true
 }
+
+exec { 'Restart Jenkins':
+  command   => 'cmd.exe /c net stop Jenkins & net start Jenkins'
+  subscribe => file_line['installStateName'],
+}
