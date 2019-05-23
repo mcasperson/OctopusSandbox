@@ -5,7 +5,7 @@ package { 'jenkins':
   provider => chocolatey
 }
 
-package { 'sql-server-express':
+package { 'sql-server-management-studio':
   ensure   => installed,
   provider => chocolatey
 }
