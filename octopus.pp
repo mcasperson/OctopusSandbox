@@ -198,7 +198,7 @@ file { 'C:/program Files (x86)/Jenkins/init.groovy.d':
 }
 -> exec{'Create Jenkins Shortcut':
     provider => 'powershell',
-    command  => '$sh = New-Object -comObject WScript.Shell; $short = $sh.CreateShortcut(objShell.SpecialFolders("Desktop") + "Jenkins.lnk"); $short.TargetPath = "http://localhost:8080"; $short.Save();'
+    command  => '$sh = New-Object -comObject WScript.Shell; $short = $sh.CreateShortcut($sh.SpecialFolders("Desktop") + "Jenkins.lnk"); $short.TargetPath = "http://localhost:8080"; $short.Save();'
 }
 
 # CONFIGURE OCTOPUS
@@ -242,7 +242,7 @@ package { 'sql-server-express':
 }
 -> exec{'Create Octopus Shortcut':
     provider => 'powershell',
-    command  => '$sh = New-Object -comObject WScript.Shell; $short = $sh.CreateShortcut(objShell.SpecialFolders("Desktop") + "Octopus.lnk"); $short.TargetPath = "http://localhost"; $short.Save();'
+    command  => '$sh = New-Object -comObject WScript.Shell; $short = $sh.CreateShortcut($sh.SpecialFolders("Desktop") + "Octopus.lnk"); $short.TargetPath = "http://localhost"; $short.Save();'
 }
 
 package { 'octopusdeploy.tentacle':
