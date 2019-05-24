@@ -5,46 +5,6 @@ package { '7zip':
   provider => chocolatey
 }
 
-file { 'C:/install':
-  ensure => 'directory'
-}
-
-file { 'C:/install/octopus.client.6.7.0':
-  ensure => 'directory'
-}
--> archive { 'C:/install/Octopus.Client.nupkg':
-  ensure       => present,
-  extract      => true,
-  extract_path => 'C:/install/octopus.client.6.7.0',
-  source       => 'https://www.nuget.org/api/v2/package/Octopus.Client/6.7.0',
-  creates      => 'C:/install/octopus.client.6.7.0/Octopus.Client.nuspec',
-  cleanup      => true,
-}
-
-file { 'C:/install/newtonsoft.json.9.0.1':
-  ensure => 'directory'
-}
--> archive { 'C:/install/Newtonsoft.Json.nupkg':
-  ensure       => present,
-  extract      => true,
-  extract_path => 'C:/install/newtonsoft.json.9.0.1',
-  source       => 'https://www.nuget.org/api/v2/package/Newtonsoft.Json/9.0.1',
-  creates      => 'C:/install/newtonsoft.json.9.0.1/Newtonsoft.Json.nuspec',
-  cleanup      => true,
-}
-
-file { 'C:/install/system.componentmodel.annotations.4.1.0':
-  ensure => 'directory'
-}
--> archive { 'C:/install/System.ComponentModel.Annotations.nupkg':
-  ensure       => present,
-  extract      => true,
-  extract_path => 'C:/install/system.componentmodel.annotations.4.1.0',
-  source       => 'https://www.nuget.org/api/v2/package/System.ComponentModel.Annotations/4.1.0',
-  creates      => 'C:/install/system.componentmodel.annotations.4.1.0/System.ComponentModel.Annotations.nuspec',
-  cleanup      => true,
-}
-
 package { 'jenkins':
   ensure   => installed,
   provider => chocolatey
@@ -106,6 +66,48 @@ package { 'awscli':
   provider => chocolatey
 }
 */
+
+# DOWNLOAD DEPENDENCIES
+
+file { 'C:/install':
+  ensure => 'directory'
+}
+
+file { 'C:/install/octopus.client.6.7.0':
+  ensure => 'directory'
+}
+-> archive { 'C:/install/Octopus.Client.nupkg':
+  ensure       => present,
+  extract      => true,
+  extract_path => 'C:/install/octopus.client.6.7.0',
+  source       => 'https://www.nuget.org/api/v2/package/Octopus.Client/6.7.0',
+  creates      => 'C:/install/octopus.client.6.7.0/Octopus.Client.nuspec',
+  cleanup      => true,
+}
+
+file { 'C:/install/newtonsoft.json.9.0.1':
+  ensure => 'directory'
+}
+-> archive { 'C:/install/Newtonsoft.Json.nupkg':
+  ensure       => present,
+  extract      => true,
+  extract_path => 'C:/install/newtonsoft.json.9.0.1',
+  source       => 'https://www.nuget.org/api/v2/package/Newtonsoft.Json/9.0.1',
+  creates      => 'C:/install/newtonsoft.json.9.0.1/Newtonsoft.Json.nuspec',
+  cleanup      => true,
+}
+
+file { 'C:/install/system.componentmodel.annotations.4.1.0':
+  ensure => 'directory'
+}
+-> archive { 'C:/install/System.ComponentModel.Annotations.nupkg':
+  ensure       => present,
+  extract      => true,
+  extract_path => 'C:/install/system.componentmodel.annotations.4.1.0',
+  source       => 'https://www.nuget.org/api/v2/package/System.ComponentModel.Annotations/4.1.0',
+  creates      => 'C:/install/system.componentmodel.annotations.4.1.0/System.ComponentModel.Annotations.nuspec',
+  cleanup      => true,
+}
 
 # CONFIGURE JENKINS
 
@@ -242,6 +244,7 @@ file { 'C:/program Files (x86)/Jenkins/init.groovy.d':
 }
 
 # CONFIGURE OCTOPUS
+
 package { 'sql-server-express':
   ensure   => installed,
   provider => chocolatey
