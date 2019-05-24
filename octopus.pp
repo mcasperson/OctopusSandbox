@@ -277,7 +277,7 @@ package { 'sql-server-express':
     provider => 'powershell',
     command  => '$sh = New-Object -comObject WScript.Shell; $short = $sh.CreateShortcut($sh.SpecialFolders("Desktop") + "\\Octopus.lnk"); $short.TargetPath = "http://localhost"; $short.Save();'
 }
--> file { 'C:/create_api_key.ps1':
+-> file { 'C:/initialise_octopus.ps1':
   ensure  => 'file',
   owner   => 'Administrators',
   group   => 'Administrators',
@@ -305,22 +305,14 @@ package { 'sql-server-express':
     #Creating API Key for user. This automatically gets saved to the database.
     $ApiObj = $repository.Users.CreateApiKey($UserObj, $APIKeyPurpose)
 
-    #Save the api key in an environment variable for other scripts to use
-    [Environment]::SetEnvironmentVariable("PuppetOctopusAPIKey", $ApiObj.ApiKey, "Machine")
+    & C:\ProgramData\chocolatey\bin\octo.exe create-environment --name=Dev --apiKey=$ApiObj.ApiKey --server=http://localhost --ignoreIfExists
+    & C:\ProgramData\chocolatey\bin\octo.exe create-environment --name=Test --apiKey=$ApiObj.ApiKey --server=http://localhost --ignoreIfExists
+    & C:\ProgramData\chocolatey\bin\octo.exe create-environment --name=Prod --apiKey=$ApiObj.ApiKey --server=http://localhost --ignoreIfExists
     | EOT
 }
 -> exec { 'Create API Key':
-  command  => '& C:/create_api_key.ps1',
+  command  => '& C:/initialise_octopus.ps1',
   provider => powershell,
-}
--> exec { 'Create Dev Environment':
-  command => 'C:\\Windows\\system32\\cmd.exe /c C:\\ProgramData\\chocolatey\\bin\\octo.exe create-environment --name=Dev --apiKey=%PuppetOctopusAPIKey% --server=http://localhost',
-}
--> exec { 'Create Test Environment':
-  command => 'C:\\Windows\\system32\\cmd.exe /c C:\\ProgramData\\chocolatey\\bin\\octo.exe create-environment --name=Test --apiKey=%PuppetOctopusAPIKey% --server=http://localhost',
-}
--> exec { 'Create Prod Environment':
-  command => 'C:\\Windows\\system32\\cmd.exe /c C:\\ProgramData\\chocolatey\\bin\\octo.exe create-environment --name=Prod --apiKey=%PuppetOctopusAPIKey% --server=http://localhost',
 }
 
 package { 'octopusdeploy.tentacle':
