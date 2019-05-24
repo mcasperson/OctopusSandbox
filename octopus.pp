@@ -1,5 +1,22 @@
 include chocolatey
 
+file { 'C:/install':
+  ensure => 'directory'
+}
+
+file { 'C:/install/octopus.client.6.7.0':
+  ensure => 'directory'
+}
+
+archive { 'C:/install/Octopus.Client.nupkg':
+  ensure       => present,
+  extract      => true,
+  extract_path => 'C:/install/octopus.client.6.7.0',
+  source       => 'https://www.nuget.org/api/v2/package/Octopus.Client/6.7.0',
+  creates      => 'C:/install/octopus.client.6.7.0/Octopus.Client.nuspec',
+  cleanup      => true,
+}
+
 package { 'jenkins':
   ensure   => installed,
   provider => chocolatey
@@ -237,14 +254,48 @@ package { 'sql-server-express':
     provider => 'powershell',
     command  => '$sh = New-Object -comObject WScript.Shell; $short = $sh.CreateShortcut($sh.SpecialFolders("Desktop") + "\\Octopus.lnk"); $short.TargetPath = "http://localhost"; $short.Save();'
 }
+-> file { 'C:/create_api_key.ps1':
+  ensure  => 'file',
+  owner   => 'Administrators',
+  group   => 'Administrators',
+  mode    => '0644',
+  content => @(EOT)
+    Add-Type -Path "C:/install/octopus.client.6.7.0/lib/netstandard2.0/Octopus.Client.dll"
+
+    #Creating a connection
+    $endpoint = new-object Octopus.Client.OctopusServerEndpoint "http://localhost"
+    $repository = new-object Octopus.Client.OctopusRepository $endpoint
+
+    #Creating login object
+    $LoginObj = New-Object Octopus.Client.Model.LoginCommand 
+    $LoginObj.Username = "admin"
+    $LoginObj.Password = "Password01!"
+
+    #Loging in to Octopus
+    $repository.Users.SignIn($LoginObj)
+
+    #Getting current user logged in
+    $UserObj = $repository.Users.GetCurrent()
+
+    #Creating API Key for user. This automatically gets saved to the database.
+    $ApiObj = $repository.Users.CreateApiKey($UserObj, $APIKeyPurpose)
+
+    #Save the api key in an environment variable for other scripts to use
+    [Environment]::SetEnvironmentVariable("PuppetOctopusAPIKey", $ApiObj.ApiKey, "Machine")
+    | EOT
+}
+-> exec { 'Create API Key':
+  command  => file('C:/create_api_key.ps1'),
+  provider => powershell,
+}
 -> exec { 'Create Dev Environment':
-  command   => 'C:\\Windows\\system32\\cmd.exe /c C:\\ProgramData\\chocolatey\\bin\\octo.exe create-environment --name=Dev --user=admin --pass=Password01! --server=http://localhost',
+  command   => 'C:\\Windows\\system32\\cmd.exe /c C:\\ProgramData\\chocolatey\\bin\\octo.exe create-environment --name=Dev --apiKey=%PuppetOctopusAPIKey% --server=http://localhost',
 }
 -> exec { 'Create Test Environment':
-  command   => 'C:\\Windows\\system32\\cmd.exe /c C:\\ProgramData\\chocolatey\\bin\\octo.exe create-environment --name=Test --user=admin --pass=Password01! --server=http://localhost',
+  command   => 'C:\\Windows\\system32\\cmd.exe /c C:\\ProgramData\\chocolatey\\bin\\octo.exe create-environment --name=Test --apiKey=%PuppetOctopusAPIKey% --server=http://localhost',
 }
 -> exec { 'Create Prod Environment':
-  command   => 'C:\\Windows\\system32\\cmd.exe /c C:\\ProgramData\\chocolatey\\bin\\octo.exe create-environment --name=Prod --user=admin --pass=Password01! --server=http://localhost',
+  command   => 'C:\\Windows\\system32\\cmd.exe /c C:\\ProgramData\\chocolatey\\bin\\octo.exe create-environment --name=Prod --apiKey=%PuppetOctopusAPIKey% --server=http://localhost',
 }
 
 package { 'octopusdeploy.tentacle':
