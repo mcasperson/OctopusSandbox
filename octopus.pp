@@ -215,7 +215,6 @@ package { 'sql-server-express':
   owner   => 'Administrators',
   group   => 'Administrators',
   mode    => '0644',
-  creates => 'C:/OctopusDeployInstalled.txt',
   content => @(EOT)
     "C:\Program Files\Octopus Deploy\Octopus\Octopus.Server.exe" create-instance --instance "OctopusServer" --config "C:\Octopus\OctopusServer.config"
     "C:\Program Files\Octopus Deploy\Octopus\Octopus.Server.exe" database --instance "OctopusServer" --connectionString "Data Source=(local)\SQLEXPRESS;Initial Catalog=Octopus;Integrated Security=True" --create --grant "NT AUTHORITY\SYSTEM"
@@ -227,7 +226,8 @@ package { 'sql-server-express':
     | EOT
 }
 -> exec { 'Install Octopus':
-  command   => 'C:\\Windows\\system32\\cmd.exe /c C:\\install_octopus.bat',
+  command => 'C:\\Windows\\system32\\cmd.exe /c C:\\install_octopus.bat',
+  creates => 'C:/OctopusDeployInstalled.txt',
 }
 -> package { 'octopustools':
   ensure   => installed,
@@ -256,7 +256,6 @@ package { 'octopusdeploy.tentacle':
   owner   => 'Administrators',
   group   => 'Administrators',
   mode    => '0644',
-  creates => 'C:/OctopusTentacleInstalled.txt',
   content => @(EOT)
     "C:\Program Files\Octopus Deploy\Tentacle\Tentacle.exe" create-instance --instance "Tentacle" --config "C:\Octopus\Tentacle.config"
     "C:\Program Files\Octopus Deploy\Tentacle\Tentacle.exe" new-certificate --instance "Tentacle" --if-blank
@@ -270,4 +269,5 @@ package { 'octopusdeploy.tentacle':
 }
 -> exec { 'Install Tentacle':
   command   => 'C:\\Windows\\system32\\cmd.exe /c C:\\install_tentacle.bat',
+  creates => 'C:/OctopusTentacleInstalled.txt',
 }
