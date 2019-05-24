@@ -233,6 +233,10 @@ package { 'sql-server-express':
   ensure   => installed,
   provider => chocolatey
 }
+-> exec{'Create Octopus Shortcut':
+    provider => 'powershell',
+    command  => '$sh = New-Object -comObject WScript.Shell; $short = $sh.CreateShortcut($sh.SpecialFolders("Desktop") + "\\Octopus.lnk"); $short.TargetPath = "http://localhost"; $short.Save();'
+}
 -> exec { 'Create Dev Environment':
   command   => 'C:\\Windows\\system32\\cmd.exe /c C:\\ProgramData\\chocolatey\\bin\\octo.exe create-environment --name=Dev --user=admin --pass=Password01! --server=http://localhost',
 }
@@ -241,10 +245,6 @@ package { 'sql-server-express':
 }
 -> exec { 'Create Prod Environment':
   command   => 'C:\\Windows\\system32\\cmd.exe /c C:\\ProgramData\\chocolatey\\bin\\octo.exe create-environment --name=Prod --user=admin --pass=Password01! --server=http://localhost',
-}
--> exec{'Create Octopus Shortcut':
-    provider => 'powershell',
-    command  => '$sh = New-Object -comObject WScript.Shell; $short = $sh.CreateShortcut($sh.SpecialFolders("Desktop") + "\\Octopus.lnk"); $short.TargetPath = "http://localhost"; $short.Save();'
 }
 
 package { 'octopusdeploy.tentacle':
