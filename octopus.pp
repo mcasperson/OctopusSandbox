@@ -7,13 +7,24 @@ file { 'C:/install':
 file { 'C:/install/octopus.client.6.7.0':
   ensure => 'directory'
 }
-
-archive { 'C:/install/Octopus.Client.nupkg':
+-> archive { 'C:/install/Octopus.Client.nupkg':
   ensure       => present,
   extract      => true,
   extract_path => 'C:/install/octopus.client.6.7.0',
   source       => 'https://www.nuget.org/api/v2/package/Octopus.Client/6.7.0',
   creates      => 'C:/install/octopus.client.6.7.0/Octopus.Client.nuspec',
+  cleanup      => true,
+}
+
+file { 'C:/install/newtonsoft.json.12.0.2':
+  ensure => 'directory'
+}
+-> archive { 'C:/install/Newtonsoft.Json.nupkg':
+  ensure       => present,
+  extract      => true,
+  extract_path => 'C:/install/newtonsoft.json.12.0.2',
+  source       => 'https://www.nuget.org/api/v2/package/Newtonsoft.Json/12.0.2',
+  creates      => 'C:/install/newtonsoft.json.12.0.2/Octopus.Client.nuspec',
   cleanup      => true,
 }
 
@@ -260,6 +271,7 @@ package { 'sql-server-express':
   group   => 'Administrators',
   mode    => '0644',
   content => @(EOT)
+    Add-Type -Path "C:/install/newtonsoft.json.12.0.2/lib/netstandard2.0/Newtonsoft.Json.dll"
     Add-Type -Path "C:/install/octopus.client.6.7.0/lib/netstandard2.0/Octopus.Client.dll"
 
     #Creating a connection
@@ -289,13 +301,13 @@ package { 'sql-server-express':
   provider => powershell,
 }
 -> exec { 'Create Dev Environment':
-  command   => 'C:\\Windows\\system32\\cmd.exe /c C:\\ProgramData\\chocolatey\\bin\\octo.exe create-environment --name=Dev --apiKey=%PuppetOctopusAPIKey% --server=http://localhost',
+  command => 'C:\\Windows\\system32\\cmd.exe /c C:\\ProgramData\\chocolatey\\bin\\octo.exe create-environment --name=Dev --apiKey=%PuppetOctopusAPIKey% --server=http://localhost',
 }
 -> exec { 'Create Test Environment':
-  command   => 'C:\\Windows\\system32\\cmd.exe /c C:\\ProgramData\\chocolatey\\bin\\octo.exe create-environment --name=Test --apiKey=%PuppetOctopusAPIKey% --server=http://localhost',
+  command => 'C:\\Windows\\system32\\cmd.exe /c C:\\ProgramData\\chocolatey\\bin\\octo.exe create-environment --name=Test --apiKey=%PuppetOctopusAPIKey% --server=http://localhost',
 }
 -> exec { 'Create Prod Environment':
-  command   => 'C:\\Windows\\system32\\cmd.exe /c C:\\ProgramData\\chocolatey\\bin\\octo.exe create-environment --name=Prod --apiKey=%PuppetOctopusAPIKey% --server=http://localhost',
+  command => 'C:\\Windows\\system32\\cmd.exe /c C:\\ProgramData\\chocolatey\\bin\\octo.exe create-environment --name=Prod --apiKey=%PuppetOctopusAPIKey% --server=http://localhost',
 }
 
 package { 'octopusdeploy.tentacle':
