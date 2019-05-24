@@ -16,15 +16,27 @@ file { 'C:/install/octopus.client.6.7.0':
   cleanup      => true,
 }
 
-file { 'C:/install/newtonsoft.json.12.0.2':
+file { 'C:/install/newtonsoft.json.9.0.1':
   ensure => 'directory'
 }
 -> archive { 'C:/install/Newtonsoft.Json.nupkg':
   ensure       => present,
   extract      => true,
-  extract_path => 'C:/install/newtonsoft.json.12.0.2',
-  source       => 'https://www.nuget.org/api/v2/package/Newtonsoft.Json/12.0.2',
-  creates      => 'C:/install/newtonsoft.json.12.0.2/Newtonsoft.Json.nuspec',
+  extract_path => 'C:/install/newtonsoft.json.9.0.1',
+  source       => 'https://www.nuget.org/api/v2/package/Newtonsoft.Json/9.0.1',
+  creates      => 'C:/install/newtonsoft.json.9.0.1/Newtonsoft.Json.nuspec',
+  cleanup      => true,
+}
+
+file { 'C:/install/system.componentmodel.annotations.4.1.0':
+  ensure => 'directory'
+}
+-> archive { 'C:/install/System.ComponentModel.Annotations.nupkg':
+  ensure       => present,
+  extract      => true,
+  extract_path => 'C:/install/system.componentmodel.annotations.4.1.0',
+  source       => 'https://www.nuget.org/api/v2/package/System.ComponentModel.Annotations/4.1.0',
+  creates      => 'C:/install/system.componentmodel.annotations.4.1.0/System.ComponentModel.Annotations.nuspec',
   cleanup      => true,
 }
 
@@ -271,7 +283,8 @@ package { 'sql-server-express':
   group   => 'Administrators',
   mode    => '0644',
   content => @(EOT)
-    Add-Type -Path "C:/install/newtonsoft.json.12.0.2/lib/netstandard2.0/Newtonsoft.Json.dll"
+    Add-Type -Path "C:/install/system.componentmodel.annotations.4.1.0/lib/netstandard1.4/System.ComponentModel.Annotations.dll"
+    Add-Type -Path "C:/install/newtonsoft.json.9.0.1/lib/netstandard1.0/Newtonsoft.Json.dll"
     Add-Type -Path "C:/install/octopus.client.6.7.0/lib/netstandard2.0/Octopus.Client.dll"
 
     #Creating a connection
