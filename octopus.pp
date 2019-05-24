@@ -215,6 +215,7 @@ package { 'sql-server-express':
   owner   => 'Administrators',
   group   => 'Administrators',
   mode    => '0644',
+  creates => 'C:/OctopusDeployInstalled.txt',
   content => @(EOT)
     "C:\Program Files\Octopus Deploy\Octopus\Octopus.Server.exe" create-instance --instance "OctopusServer" --config "C:\Octopus\OctopusServer.config"
     "C:\Program Files\Octopus Deploy\Octopus\Octopus.Server.exe" database --instance "OctopusServer" --connectionString "Data Source=(local)\SQLEXPRESS;Initial Catalog=Octopus;Integrated Security=True" --create --grant "NT AUTHORITY\SYSTEM"
@@ -222,6 +223,7 @@ package { 'sql-server-express':
     "C:\Program Files\Octopus Deploy\Octopus\Octopus.Server.exe" service --instance "OctopusServer" --stop
     "C:\Program Files\Octopus Deploy\Octopus\Octopus.Server.exe" admin --instance "OctopusServer" --username "admin" --email "a@a.com" --password "Password01!"
     "C:\Program Files\Octopus Deploy\Octopus\Octopus.Server.exe" service --instance "OctopusServer" --install --reconfigure --start --dependOn "MSSQL$SQLEXPRESS"
+    copy /y NUL C:\OctopusDeployInstalled.txt >NUL
     | EOT
 }
 -> exec { 'Install Octopus':
@@ -254,6 +256,7 @@ package { 'octopusdeploy.tentacle':
   owner   => 'Administrators',
   group   => 'Administrators',
   mode    => '0644',
+  creates => 'C:/OctopusTentacleInstalled.txt',
   content => @(EOT)
     "C:\Program Files\Octopus Deploy\Tentacle\Tentacle.exe" create-instance --instance "Tentacle" --config "C:\Octopus\Tentacle.config"
     "C:\Program Files\Octopus Deploy\Tentacle\Tentacle.exe" new-certificate --instance "Tentacle" --if-blank
@@ -262,6 +265,7 @@ package { 'octopusdeploy.tentacle':
     "C:\Program Files\Octopus Deploy\Tentacle\Tentacle.exe" polling-proxy --instance "Tentacle" --proxyEnable "False" --proxyUsername "" --proxyPassword "" --proxyHost "" --proxyPort ""
     "C:\Program Files\Octopus Deploy\Tentacle\Tentacle.exe" register-with --instance "Tentacle" --server "http://localhost" --name "WindowsSandbox" --comms-style "TentacleActive" --server-comms-port "10943" --username "admin" --password "Password01!" --space "Default" --environment "Dev" --role "Windows" --policy "Default Machine Policy"
     "C:\Program Files\Octopus Deploy\Tentacle\Tentacle.exe" service --instance "Tentacle" --install --stop --start
+    copy /y NUL C:\OctopusTentacleInstalled.txt >NUL
     | EOT
 }
 -> exec { 'Install Tentacle':
