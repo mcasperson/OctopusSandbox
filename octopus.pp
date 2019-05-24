@@ -309,9 +309,9 @@ package { 'sql-server-express':
     Set-Content -Path c:\octopus_api_key.txt -Value $ApiObj.ApiKey
 
     #Create the standard environments
-    & C:\ProgramData\chocolatey\bin\octo.exe create-environment --name=Dev --apiKey=$ApiObj.ApiKey --server=http://localhost --ignoreIfExists
-    & C:\ProgramData\chocolatey\bin\octo.exe create-environment --name=Test --apiKey=$ApiObj.ApiKey --server=http://localhost --ignoreIfExists
-    & C:\ProgramData\chocolatey\bin\octo.exe create-environment --name=Prod --apiKey=$ApiObj.ApiKey --server=http://localhost --ignoreIfExists
+    & C:\ProgramData\chocolatey\bin\octo.exe create-environment --name=Dev --apiKey=$($ApiObj.ApiKey) --server=http://localhost --ignoreIfExists
+    & C:\ProgramData\chocolatey\bin\octo.exe create-environment --name=Test --apiKey=$($ApiObj.ApiKey) --server=http://localhost --ignoreIfExists
+    & C:\ProgramData\chocolatey\bin\octo.exe create-environment --name=Prod --apiKey=$($ApiObj.ApiKey) --server=http://localhost --ignoreIfExists
     | EOT
 }
 -> exec { 'Populate Environments':
