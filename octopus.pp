@@ -310,7 +310,7 @@ package { 'sql-server-express':
     & C:\ProgramData\chocolatey\bin\octo.exe create-environment --name=Prod --apiKey=$ApiObj.ApiKey --server=http://localhost --ignoreIfExists
     | EOT
 }
--> exec { 'Create API Key':
+-> exec { 'Populate Environments':
   command  => '& C:/initialise_octopus.ps1',
   provider => powershell,
 }
