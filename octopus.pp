@@ -303,7 +303,7 @@ package { 'sql-server-express':
     $UserObj = $repository.Users.GetCurrent()
 
     #Creating API Key for user. This automatically gets saved to the database.
-    $ApiObj = $repository.Users.CreateApiKey($UserObj, $APIKeyPurpose)
+    $ApiObj = $repository.Users.CreateApiKey($UserObj, "Puppet Install")
 
     #Save the API key so we can use it later
     Set-Content -Path c:\octopus_api_key.txt -Value $ApiObj.ApiKey
