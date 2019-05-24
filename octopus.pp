@@ -1,5 +1,10 @@
 include chocolatey
 
+package { '7zip':
+  ensure   => installed,
+  provider => chocolatey
+}
+
 file { 'C:/install':
   ensure => 'directory'
 }
@@ -41,11 +46,6 @@ file { 'C:/install/system.componentmodel.annotations.4.1.0':
 }
 
 package { 'jenkins':
-  ensure   => installed,
-  provider => chocolatey
-}
-
-package { '7zip':
   ensure   => installed,
   provider => chocolatey
 }
