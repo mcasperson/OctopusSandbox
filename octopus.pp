@@ -285,7 +285,7 @@ package { 'sql-server-express':
     | EOT
 }
 -> exec { 'Create API Key':
-  command  => file('C:/create_api_key.ps1'),
+  command  => '& C:/create_api_key.ps1',
   provider => powershell,
 }
 -> exec { 'Create Dev Environment':
@@ -319,6 +319,6 @@ package { 'octopusdeploy.tentacle':
     | EOT
 }
 -> exec { 'Install Tentacle':
-  command   => 'C:\\Windows\\system32\\cmd.exe /c C:\\install_tentacle.bat',
+  command => 'C:\\Windows\\system32\\cmd.exe /c C:\\install_tentacle.bat',
   creates => 'C:/OctopusTentacleInstalled.txt',
 }
