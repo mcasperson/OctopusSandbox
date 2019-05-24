@@ -24,7 +24,7 @@ file { 'C:/install/newtonsoft.json.12.0.2':
   extract      => true,
   extract_path => 'C:/install/newtonsoft.json.12.0.2',
   source       => 'https://www.nuget.org/api/v2/package/Newtonsoft.Json/12.0.2',
-  creates      => 'C:/install/newtonsoft.json.12.0.2/Octopus.Client.nuspec',
+  creates      => 'C:/install/newtonsoft.json.12.0.2/Newtonsoft.Json.nuspec',
   cleanup      => true,
 }
 
