@@ -73,7 +73,7 @@ file { 'C:/program Files (x86)/Jenkins/init.groovy.d':
   ensure    => 'directory',
   subscribe => Package['jenkins'],
 }
--> file { 'C:/Program Files (x86)/Jenkins/init.groovy.d/1.security.groovy':
+-> file { 'C:/Program Files (x86)/Jenkins/init.groovy.d/a.security.groovy':
   ensure    => 'file',
   owner     => 'Administrators',
   group     => 'Administrators',
@@ -102,7 +102,7 @@ file { 'C:/program Files (x86)/Jenkins/init.groovy.d':
 
     | EOT
 }
--> file { 'C:/Program Files (x86)/Jenkins/init.groovy.d/2.plugins.groovy':
+-> file { 'C:/Program Files (x86)/Jenkins/init.groovy.d/b.plugins.groovy':
   ensure    => 'file',
   owner     => 'Administrators',
   group     => 'Administrators',
@@ -165,7 +165,7 @@ file { 'C:/program Files (x86)/Jenkins/init.groovy.d':
 
     | EOT
 }
--> file { 'C:/Program Files (x86)/Jenkins/init.groovy.d/3.simpletheme.groovy':
+-> file { 'C:/Program Files (x86)/Jenkins/init.groovy.d/c.simpletheme.groovy':
   ensure    => 'file',
   owner     => 'Administrators',
   group     => 'Administrators',
