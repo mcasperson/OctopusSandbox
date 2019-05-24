@@ -232,13 +232,13 @@ package { 'sql-server-express':
   provider => chocolatey
 }
 -> exec { 'Create Dev Environment':
-  command   => 'C:\\Windows\\system32\\cmd.exe /c octo create-environment --name=Dev --user=admin --password=Password01! --server=http://localhost',
+  command   => 'C:\\Windows\\system32\\cmd.exe /c C:\\ProgramData\\chocolatey\\octo.exe create-environment --name=Dev --user=admin --password=Password01! --server=http://localhost',
 }
 -> exec { 'Create Test Environment':
-  command   => 'C:\\Windows\\system32\\cmd.exe /c octo create-environment --name=Test --user=admin --password=Password01! --server=http://localhost',
+  command   => 'C:\\Windows\\system32\\cmd.exe /c C:\\ProgramData\\chocolatey\\octo.exe create-environment --name=Test --user=admin --password=Password01! --server=http://localhost',
 }
 -> exec { 'Create Prod Environment':
-  command   => 'C:\\Windows\\system32\\cmd.exe /c octo create-environment --name=Prod --user=admin --password=Password01! --server=http://localhost',
+  command   => 'C:\\Windows\\system32\\cmd.exe /c C:\\ProgramData\\chocolatey\\octo.exe create-environment --name=Prod --user=admin --password=Password01! --server=http://localhost',
 }
 -> exec{'Create Octopus Shortcut':
     provider => 'powershell',
