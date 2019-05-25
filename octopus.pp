@@ -129,18 +129,20 @@ file { 'C:/program Files (x86)/Jenkins/init.groovy.d':
 
     def instance = Jenkins.getInstance()
     def logger = Logger.getLogger(Jenkins.class.getName())
-
-    logger.log(Level.INFO, "Creating local admin user 'admin'.")
-
-    def strategy = new FullControlOnceLoggedInAuthorizationStrategy()
-    strategy.setAllowAnonymousRead(false)
-
     def hudsonRealm = new HudsonPrivateSecurityRealm(false)
-    hudsonRealm.createAccount("admin", "Password01!")
+    def user = hudsonRealm.getAllUsers().collect { it.toString() }
 
-    instance.setSecurityRealm(hudsonRealm)
-    instance.setAuthorizationStrategy(strategy)
-    instance.save()
+    if ("admin" in users_s) {
+      logger.log(Level.INFO, "User 'admin' already exists.")
+    } else {
+      logger.log(Level.INFO, "Creating local admin user 'admin'.")
+      hudsonRealm.createAccount("admin", "Password01!")
+      def strategy = new FullControlOnceLoggedInAuthorizationStrategy()
+      strategy.setAllowAnonymousRead(false)
+      instance.setSecurityRealm(hudsonRealm)
+      instance.setAuthorizationStrategy(strategy)
+      instance.save()
+    }
 
     | EOT
 }
@@ -216,16 +218,19 @@ file { 'C:/program Files (x86)/Jenkins/init.groovy.d':
     #!groovy
     import jenkins.model.Jenkins;
     import org.jenkinsci.plugins.simpletheme.CssUrlThemeElement;
+    import java.util.logging.Logger
 
     Jenkins jenkins = Jenkins.get()
-
+    def logger = Logger.getLogger(Jenkins.class.getName())
     def themeDecorator = jenkins.getExtensionList(org.codefirst.SimpleThemeDecorator.class).first()
 
-    themeDecorator.setElements([
-      new CssUrlThemeElement('https://cdn.rawgit.com/afonsof/jenkins-material-theme/gh-pages/dist/material-blue.css')
-    ])
-
-    jenkins.save()
+    if (themeDecorator.getElements().filter(it instanceof CssUrlThemeElement).isEmpty()) {
+      logger.log(Level.INFO, "Setting simple theme CSS URL.")
+      themeDecorator.setElements([
+        new CssUrlThemeElement('https://cdn.rawgit.com/afonsof/jenkins-material-theme/gh-pages/dist/material-blue.css')
+      ])
+      jenkins.save()
+    }
 
     | EOT
 }
