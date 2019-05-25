@@ -230,6 +230,8 @@ file { 'C:/program Files (x86)/Jenkins/init.groovy.d':
         new CssUrlThemeElement('https://cdn.rawgit.com/afonsof/jenkins-material-theme/gh-pages/dist/material-blue.css')
       ])
       jenkins.save()
+    } else {
+      logger.log(Level.INFO, "Simple theme already has a CSS URL.")
     }
 
     | EOT
