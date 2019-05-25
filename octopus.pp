@@ -157,6 +157,11 @@ file { 'C:/program Files (x86)/Jenkins/init.groovy.d':
     import hudson.PluginWrapper
     import jenkins.model.*
 
+    // The list of plugins to install
+    Set<String> plugins_to_install = [
+        "git", "github", "blueocean", "custom-tools-plugin", "simple-theme-plugin"
+    ]
+
     /*
       Install Jenkins plugins
     */
@@ -177,11 +182,6 @@ file { 'C:/program Files (x86)/Jenkins/init.groovy.d':
 
     // The default update site
     UpdateSite updateSite = Jenkins.getInstance().getUpdateCenter().getById('default')
-
-    // The list of plugins to install
-    Set<String> plugins_to_install = [
-        "git", "github", "blueocean", "custom-tools-plugin", "simple-theme-plugin"
-    ]
 
     List<PluginWrapper> plugins = Jenkins.instance.pluginManager.getPlugins()
 
