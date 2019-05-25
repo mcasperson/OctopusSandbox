@@ -132,7 +132,7 @@ file { 'C:/program Files (x86)/Jenkins/init.groovy.d':
     def hudsonRealm = new HudsonPrivateSecurityRealm(false)
     def user = hudsonRealm.getAllUsers().collect { it.toString() }
 
-    if ("admin" in users_s) {
+    if ("admin" in users) {
       logger.log(Level.INFO, "User 'admin' already exists.")
     } else {
       logger.log(Level.INFO, "Creating local admin user 'admin'.")
