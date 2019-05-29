@@ -238,11 +238,11 @@ file { 'C:/program Files (x86)/Jenkins/init.groovy.d':
     def hudsonRealm = new HudsonPrivateSecurityRealm(false)
     def users = hudsonRealm.getAllUsers().collect { it.toString() }
 
-    if ("admin" in users) {
-      logger.log(Level.INFO, "User 'admin' already exists.")
+    if ("jenkinsadmin" in users) {
+      logger.log(Level.INFO, "User 'jenkinsadmin' already exists.")
     } else {
-      logger.log(Level.INFO, "Creating local admin user 'admin'.")
-      hudsonRealm.createAccount("admin", "Password01!")
+      logger.log(Level.INFO, "Creating local admin user 'jenkinsadmin'.")
+      hudsonRealm.createAccount("jenkinsadmin", "Password01!")
       def strategy = new FullControlOnceLoggedInAuthorizationStrategy()
       strategy.setAllowAnonymousRead(false)
       instance.setSecurityRealm(hudsonRealm)
@@ -373,7 +373,7 @@ file { 'C:/program Files (x86)/Jenkins/init.groovy.d':
         CredentialsScope.GLOBAL,
         "APIKey",
         "Octopus API Key",
-        Secret.fromString(new File("C:\octopus_api.txt").text)))
+        Secret.fromString(new File("C:\\octopus_api.txt").text)))
 
     store.addCredentials(
       domain, 
