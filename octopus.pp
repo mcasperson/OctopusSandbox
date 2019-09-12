@@ -25,6 +25,11 @@ package { 'terraform':
   provider => chocolatey
 }
 
+package { 'microsoft-build-tools':
+  ensure   => installed,
+  provider => chocolatey
+}
+
 /*
 package { 'docker-desktop':
   ensure   => installed,
