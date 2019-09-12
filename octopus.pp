@@ -30,6 +30,11 @@ package { 'microsoft-build-tools':
   provider => chocolatey
 }
 
+package { 'jre8':
+  ensure   => installed,
+  provider => chocolatey
+}
+
 /*
 package { 'docker-desktop':
   ensure   => installed,
