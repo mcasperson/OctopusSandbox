@@ -35,6 +35,11 @@ package { 'jre8':
   provider => chocolatey
 }
 
+package { 'googlechrome':
+  ensure   => installed,
+  provider => chocolatey
+}
+
 /*
 package { 'docker-desktop':
   ensure   => installed,
