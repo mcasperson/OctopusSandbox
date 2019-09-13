@@ -84,6 +84,21 @@ package { 'awscli':
 
 # DOWNLOAD DEPENDENCIES
 
+windows_env { 'PATH=C:\tools': }
+
+file { 'C:/tools':
+  ensure => 'directory'
+}
+
+archive { 'C:/tools/chromedriver_win32.zip':
+  ensure       => present,
+  extract      => true,
+  extract_path => 'C:/tools',
+  source       => 'https://chromedriver.storage.googleapis.com/77.0.3865.40/chromedriver_win32.zip',
+  creates      => 'C:/tools/chromedriver.exe',
+  cleanup      => true,
+}
+
 file { 'C:/install':
   ensure => 'directory'
 }
