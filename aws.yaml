@@ -61,7 +61,7 @@ Parameters:
     Description: Enter instance size. Default is m3.large.
   AMI:
     Type: String
-    Default: ami-034e1d78dd9d4a332
+    Default: ami-06a4e829b8bbad61e
     Description: AMI Image
   IPAddress:
     Type: String
