@@ -35,13 +35,7 @@ package { 'googlechrome':
   provider => chocolatey
 }
 
-/*
-package { 'docker-desktop':
-  ensure   => installed,
-  provider => chocolatey
-}
-
-package { 'docker-cli':
+package { 'microsoft-build-tools':
   ensure   => installed,
   provider => chocolatey
 }
@@ -62,6 +56,17 @@ package { 'kubernetes-helm':
 }
 
 package { 'kubernetes-cli':
+  ensure   => installed,
+  provider => chocolatey
+}
+
+/*
+package { 'docker-desktop':
+  ensure   => installed,
+  provider => chocolatey
+}
+
+package { 'docker-cli':
   ensure   => installed,
   provider => chocolatey
 }
