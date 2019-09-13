@@ -340,6 +340,7 @@ file { 'C:/program Files (x86)/Jenkins/init.groovy.d':
 
     | EOT
 }
+/*
 -> file { 'C:/Program Files (x86)/Jenkins/init.groovy.d/c.simpletheme.groovy':
   ensure    => 'file',
   owner     => 'Administrators',
@@ -368,6 +369,7 @@ file { 'C:/program Files (x86)/Jenkins/init.groovy.d':
 
     | EOT
 }
+*/
 -> file { 'C:/Program Files (x86)/Jenkins/init.groovy.d/d.secrets.groovy':
   ensure    => 'file',
   owner     => 'Administrators',
