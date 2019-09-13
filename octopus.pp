@@ -94,6 +94,12 @@ archive { 'C:/tools/chromedriver_win32.zip':
   cleanup      => true,
 }
 
+file { 'webdrivertraining-1.0-SNAPSHOT.jar':
+  path => 'C:/tools/webdrivertraining-1.0-SNAPSHOT.jar',
+  ensure => 'file',
+  source => 'https://github.com/OctopusDeploy/WebDriverTraining/releases/download/0.0.2/webdrivertraining-1.0-SNAPSHOT.jar',
+}
+
 file { 'C:/install':
   ensure => 'directory'
 }
